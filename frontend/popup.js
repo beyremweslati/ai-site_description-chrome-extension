@@ -1,16 +1,22 @@
-document.getElementById('checkButton').addEventListener('click', async () => {    
+document.getElementById('checkButton').addEventListener('click', async () => {
     const resultDiv = document.getElementById('result');
-    const apiUrl = document.getElementById('urlInput');
     resultDiv.style.display = 'none';
-    let [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-    if (tab.url) {
+    let url = ""
+    if (document.getElementById("url").value) {
+        url = document.getElementById("url").value;
+
+    } else {
+        let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        url = tab.url;
+    }
+    if (url) {
         try {
-            const response = await fetch(apiUrl.value, {
+            const response = await fetch('http://localhost:8000/check_url', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({url: tab.url}),
+                body: JSON.stringify({ url: url }),
             });
             const data = await response.json();
             resultDiv.textContent = `${data.result}`;
